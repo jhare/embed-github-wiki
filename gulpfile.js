@@ -10,7 +10,6 @@ var concat = require('gulp-concat');
 var stylus = require('gulp-stylus');
 var livereload = require('gulp-livereload');
 var nodemon = require('gulp-nodemon');
-var nodeinspector = require('gulp-node-inspector');
 
 var options = {
   'buildDir': './dist/',
@@ -32,7 +31,10 @@ var options = {
       'sources': [
         './src/public/features/**/*.js'
       ]
-    }
+    },
+    'tests': [
+      './test/unit/public/**/*.js'
+    ]
   },
   'server': {
     'app': './src/server/app.js',
@@ -73,7 +75,8 @@ var options = {
       './src/public/common/**/*.styl',
       './src/public/features/**/*.styl'
     ]
-  }
+  },
+  'testReporter': 'nyan'
 };
 
 function buildJavascript(target) {
@@ -139,12 +142,26 @@ function buildImages() {
 function unitTestServer() {
   return gulp.src(options.server.tests)
     .pipe(mocha({
-      'reporter': 'nyan'
+      'reporter': options.testReporter 
+    }));
+}
+
+function unitTestClient() {
+  return gulp.src(options.javascript.tests)
+    .pipe(mocha({
+      'reporter': options.testReporter 
     }));
 }
 
 function watchUnitTests() {
   gulp.watch([options.server.sources, options.server.tests], ['test-server']);
+
+  gulp.watch([
+    options.javascript.common.sources,
+    options.javascript.features.sources,
+    options.javascript.tests],
+    ['test-server']
+  );
 }
 
 function watchClientSide(target, taskList) {
@@ -192,6 +209,7 @@ function serveProject() {
 
 // Testing
 gulp.task('test-server', unitTestServer);
+gulp.task('test-client', unitTestClient);
 
 // Building
 gulp.task('build-core', buildCore);
@@ -240,4 +258,5 @@ gulp.task('watch-client', [
 
 // Other
 gulp.task('serve', serveProject);
+gulp.task('test', ['test-server', 'test-client']);
 gulp.task('watch', ['serve', 'watch-client']);
