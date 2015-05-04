@@ -16,4 +16,5 @@ embed.directive('githubWikiPage', [function defineGithubWikiPageDirective() {
       'pageid': '@'
     }
   };
+
 }]);

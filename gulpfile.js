@@ -3,8 +3,6 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var stylus = require('gulp-stylus');
-var transform = require('vinyl-transform');
-var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var browserify = require('browserify');
@@ -13,6 +11,9 @@ var source = require('vinyl-source-stream');
 var tap = require('gulp-tap');
 var debug = require('gulp-debug');
 var manifest = require('gulp-concat-filenames');
+var htmlmin = require('gulp-htmlmin');
+var html2js = require('gulp-ng-html2js');
+var buffer = require('gulp-buffer');
 
 var options = {
   'buildDir': './dist/',
@@ -30,8 +31,6 @@ var options = {
   },
   'partials': {
     'sources': [
-      './src/core/common/**/*.html',
-      './src/public/common/**/*.html',
       './src/public/features/**/*.html'
     ]
   },
@@ -74,9 +73,21 @@ function buildStyles() {
 }
 
 function buildPartials() {
+  var htmlMinOpts = {
+    'collapseWhitespace': true
+  };
+
+  var html2JsOpts = {
+    'moduleName': 'embedGithubWikiPartials',
+    'stripPrefix': 'src/public/features/'
+  };
+
   return gulp
     .src(options.partials.sources)
-    .pipe(gulp.dest(options.buildDir + '/partials'));
+    .pipe(htmlmin(htmlMinOpts))
+    .pipe(html2js(html2JsOpts))
+    .pipe(concat('partials.js'))
+    .pipe(gulp.dest(options.buildDir));
 }
 
 gulp.task('build-javascript', buildJavascript);
