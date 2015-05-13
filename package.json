@@ -1,5 +1,5 @@
 {
-  "name": "ng-embed-github-wiki",
+  "name": "embed-github-wiki",
   "version": "0.0.1",
   "description": "AngularJS directive to embed a rendered Github wiki page into HTML from its repo.",
   "main": "index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jhare/ng-embed-github-wiki"
+    "url": "https://github.com/jhare/embed-github-wiki"
   },
   "keywords": [
     "github",
@@ -23,12 +23,15 @@
   "author": "Joe Hare <joseph.hare@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jhare/ng-embed-github-wiki/issues"
+    "url": "https://github.com/jhare/embed-github-wiki/issues"
   },
-  "homepage": "https://github.com/jhare/ng-embed-github-wiki",
+  "homepage": "https://github.com/jhare/embed-github-wiki",
   "dependencies": {
     "express": "4.x.x",
+    "highlight": "^0.2.3",
     "lodash": "^3.7.0",
+    "markdown-it": "^4.2.1",
+    "partialify": "^3.1.3",
     "rsvp": "^3.0.8"
   },
   "devDependencies": {
@@ -47,7 +50,7 @@
     "gulp-mocha": "^2.0.1",
     "gulp-ng-html2js": "^0.2.0",
     "gulp-node-inspector": "0.0.3",
-    "gulp-nodemon": "^2.0.2",
+    "gulp-nodemon": "^2.0.3",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-stylus": "^2.0.1",
     "gulp-tap": "^0.1.3",
@@ -60,5 +63,10 @@
     "vinyl-source-stream": "^1.1.0",
     "vinyl-transform": "^1.0.0",
     "zombie": "^3.1.1"
+  },
+  "browserify": {
+    "transform": [
+      "partialify"
+    ]
   }
 }
