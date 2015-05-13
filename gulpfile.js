@@ -10,13 +10,7 @@ var concat = require('gulp-concat');
 var stylus = require('gulp-stylus');
 var livereload = require('gulp-livereload');
 var nodemon = require('gulp-nodemon');
-var nodeinspector = require('gulp-node-inspector');
-//var transform = require('vinyl-transform');
-//var buffer = require('vinyl-buffer');
-//var uglify = require('gulp-uglify');
-//var sourcemaps = require('gulp-sourcemaps');
-//var gutil = require('gulp-util');
-//var debug = require('gulp-debug');
+var git = require('gulp-git');
 
 var options = {
   'buildDir': './dist/',
@@ -64,6 +58,16 @@ var options = {
   'images': [
     './src/public/common/images/**/*'
   ],
+  'markdown': {
+    'sources': [
+      './src/public/common/markdown/**/*.md',
+    ],
+    'targetWiki': 'git@github.com:Telogical/TelUI.wiki.git',
+    'cloneOptions': {
+      'args': 'src/public/common/markdown',
+      'quiet': false
+    }
+  },
   'browserify': {
     'debug': true
   },
@@ -142,6 +146,18 @@ function buildImages() {
   ;
 }
 
+function buildMarkdown() {
+  git.clone(options.markdown.targetWiki, options.markdown.cloneOptions,
+  function errorInclone(err) {
+    if(err) {
+      throw err;
+    }
+
+    gulp.src(options.markdown.sources)
+      .pipe(gulp.dest(options.buildDir + '/markdown'));
+  });
+}
+
 function unitTestServer() {
   return gulp.src(options.server.tests)
     .pipe(mocha({
@@ -213,12 +229,14 @@ gulp.task('build-styles', buildStyles);
 gulp.task('build-partials', buildPartials);
 gulp.task('build-pages', buildPages);
 gulp.task('build-images', buildImages);
+gulp.task('build-markdown', buildMarkdown);
 
 gulp.task('build', [
   'build-javascript',
   'build-styles',
   'build-partials',
-  'build-pages'
+  'build-pages',
+  'build-markdown'
 ]);
 
 // Watches

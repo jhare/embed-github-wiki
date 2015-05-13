@@ -45,6 +45,7 @@
     "gulp-concat": "^2.5.2",
     "gulp-concat-filenames": "^1.0.0",
     "gulp-debug": "^2.0.1",
+    "gulp-git": "^1.2.3",
     "gulp-htmlmin": "^1.1.1",
     "gulp-livereload": "^3.8.0",
     "gulp-mocha": "^2.0.1",
