@@ -1,12 +1,36 @@
 'use strict';
 
 var embed = angular.module('ngEmbedGithubWiki', []);
+var MarkdownIt = require('markdown-it');
+var highlight = require('highlight');
 
-console.log('i have my module', embed);
+var md = new MarkdownIt();
+
 embed.directive('githubWikiPage', [function defineGithubWikiPageDirective() {
 
-  function link($element, $scope, $attrs) {
-    console.log('in ghwp', $element, $scope, $attrs);
+  function link($scope, $element, $attrs) {
+    function getMarkdownSuccess(markDown) {
+      console.log('data is', markDown);
+      console.log('md is', md);
+
+      var renderedMarkdown = md.render(markDown);
+      $element.html(renderedMarkdown);
+    }
+
+    function getMarkdownComplete(jqXHR, textStatus) {
+      console.log('complete call', jqXHR, textStatus);
+    }
+
+    function getMarkdownError(error, textStatus, jqXHR) {
+      console.log('had error', error, textStatus, jqXHR);
+    }
+
+    $.ajax('/markdown/Best-Practices---Angular.md', {
+      'success': getMarkdownSuccess,
+      'complete': getMarkdownComplete,
+      'error': getMarkdownError,
+    });
+
   }
 
   return {
