@@ -2,35 +2,35 @@
 
 var embed = angular.module('ngEmbedGithubWiki', []);
 var MarkdownIt = require('markdown-it');
-var highlight = require('highlight');
+var hljs = require('highlight.js');
 
-var md = new MarkdownIt();
+var md = new MarkdownIt({
+  'highlight': function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(lang, str).value;
+      } catch (__) {}
+    }
+
+    try {
+      return hljs.highlightAuto(str).value;
+    } catch (__) {}
+
+    return ''; // use external default escaping
+  }                      
+});
 
 embed.directive('githubWikiPage', [function defineGithubWikiPageDirective() {
 
-  function link($scope, $element, $attrs) {
+  function link($scope, $element) {
     function getMarkdownSuccess(markDown) {
-      console.log('data is', markDown);
-      console.log('md is', md);
-
       var renderedMarkdown = md.render(markDown);
       $element.html(renderedMarkdown);
     }
 
-    function getMarkdownComplete(jqXHR, textStatus) {
-      console.log('complete call', jqXHR, textStatus);
-    }
-
-    function getMarkdownError(error, textStatus, jqXHR) {
-      console.log('had error', error, textStatus, jqXHR);
-    }
-
-    $.ajax('/markdown/Best-Practices---Angular.md', {
-      'success': getMarkdownSuccess,
-      'complete': getMarkdownComplete,
-      'error': getMarkdownError,
+    $.ajax($scope.pagename, {
+      'success': getMarkdownSuccess
     });
-
   }
 
   return {
@@ -39,7 +39,7 @@ embed.directive('githubWikiPage', [function defineGithubWikiPageDirective() {
     'templateUrl': 'partials/github-wiki/github-wiki-partial.html',
     'scope': {
       'id': '@',
-      'pageid': '@'
+      'pagename': '@'
     }
   };
 

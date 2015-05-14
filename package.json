@@ -28,7 +28,7 @@
   "homepage": "https://github.com/jhare/embed-github-wiki",
   "dependencies": {
     "express": "4.x.x",
-    "highlight": "0.2.0",
+    "highlight.js": "^8.x.x",
     "jquery": "1.x.x",
     "lodash": "^3.7.0",
     "markdown-it": "^4.2.1",
