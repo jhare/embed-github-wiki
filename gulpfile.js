@@ -11,6 +11,8 @@ var stylus = require('gulp-stylus');
 var livereload = require('gulp-livereload');
 var nodemon = require('gulp-nodemon');
 var git = require('gulp-git');
+var del = require('del');
+var runSequence = require('run-sequence');
 
 var options = {
   'buildDir': './dist/',
@@ -212,6 +214,15 @@ function serveProject() {
   });
 }
 
+function cleanDist(cb) {
+  var deletionTarget = [
+    options.buildDir,
+    options.markdown.cloneOptions.args
+  ];
+
+  del(deletionTarget, cb);
+}
+
 // Testing
 gulp.task('test-server', unitTestServer);
 
@@ -231,13 +242,16 @@ gulp.task('build-pages', buildPages);
 gulp.task('build-images', buildImages);
 gulp.task('build-markdown', buildMarkdown);
 
-gulp.task('build', [
-  'build-javascript',
-  'build-styles',
-  'build-partials',
-  'build-pages',
-  'build-markdown'
-]);
+gulp.task('build', function() {
+  runSequence(
+    'clean',
+    ['build-javascript',
+    'build-styles',
+    'build-partials',
+    'build-pages',
+    'build-markdown']
+  );
+});
 
 // Watches
 gulp.task('start-livereload', startLiveReload);
@@ -263,5 +277,6 @@ gulp.task('watch-client', [
 ]);
 
 // Other
+gulp.task('clean', cleanDist);
 gulp.task('serve', serveProject);
 gulp.task('watch', ['serve', 'watch-client']);
